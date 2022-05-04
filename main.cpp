@@ -307,6 +307,7 @@ int main()
 
 		color_it->second->set_color(64);
 
+		auto start = high_resolution_clock::now();
 		for (auto L : shapes)
 		{
 			int randomColor[3];
@@ -315,7 +316,7 @@ int main()
 			randomColor[1] = L->get_color();
 			randomColor[2] = L->get_color();
 
-			auto start = high_resolution_clock::now();
+			
 
 #pragma omp parallel for
 
@@ -442,14 +443,16 @@ int main()
 				}
 			}
 
-			auto stop = high_resolution_clock::now();
-
-			auto duration = duration_cast<microseconds>(stop - start);
-
-			cout << "==================" << endl;
-			cout << duration.count() << " microseconds." << endl;
-			cout << "==================" << endl;
+			
 		}
+		
+		auto stop = high_resolution_clock::now();
+
+		auto duration = duration_cast<microseconds>(stop - start);
+
+		cout << "==================" << endl;
+		cout << duration.count() << " microseconds." << endl;
+		cout << "==================" << endl;
 
 		image.display();
 
