@@ -235,17 +235,17 @@ int main()
 
 		if (camera.get_dist_spec_scene() <= camera.get_dist_spec_screen())
 		{
-			throw std::runtime_error("Error1.\n");
+			throw std::runtime_error("Error.\n");
 		}
 
 		if (camera.get_angle_of_view() <0.0 || camera.get_angle_of_view() >=180.0)
 		{
-			throw std::runtime_error("Error2.\n");
+			throw std::runtime_error("Error.\n");
 		}
 
 		if (screen.get_height() <= 0 || screen.get_width() <=0 )
 		{
-			throw std::runtime_error("Error3.\n");
+			throw std::runtime_error("Error.\n");
 		}
 
 		screen.tangent_();

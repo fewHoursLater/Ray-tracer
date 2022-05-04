@@ -113,7 +113,7 @@ float return_param(const float origin_x, const float origin_y, const float origi
 
 	if (a > -EPSILON && a < EPSILON)
 	{
-		throw std::runtime_error("Failed \n");
+		throw std::runtime_error("Error. \n");
 	}
 
 	f = 1.0 / a;
@@ -122,7 +122,7 @@ float return_param(const float origin_x, const float origin_y, const float origi
 
 	if (u < 0.0 || u > 1.0)
 	{
-		throw std::runtime_error("Failed.\n");
+		throw std::runtime_error("Error.\n");
 	}
 
 	q = s.V_product(edge1);
@@ -130,7 +130,7 @@ float return_param(const float origin_x, const float origin_y, const float origi
 
 	if (v < 0.0 || u + v > 1.0)
 	{
-		throw std::runtime_error("Failed \n");
+		throw std::runtime_error("Error.\n");
 	}
 
 	float t = f * edge2.D_product(q);

@@ -18,7 +18,7 @@ Sphere::Sphere(const float x, const float y, const float z, const float R)
 {
 	if (R < 0)
 	{
-		throw std::runtime_error("sphere.\n");
+		throw std::runtime_error("Negative radius.\n");
 	}
 
 	x_ = x;
@@ -60,7 +60,7 @@ bool Sphere::ray_intersect(const float origin_x, const float origin_y, const flo
 
 	if (is_equal(a, 0.0f))
 	{
-		cout << "OOps" << endl;
+		cout << "Error." << endl;
 	}
 
 	float t = (-b - sqrtf(D)) / (2.0f * a);
