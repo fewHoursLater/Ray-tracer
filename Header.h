@@ -16,6 +16,7 @@
 #include <omp.h>
 #include <stdlib.h>
 #include <map>
+#include <chrono>
 #include "CImg.h"
 
 #pragma warning(disable : 4244)
@@ -26,7 +27,7 @@ constexpr float epsi = 1e-6f;
 
 using namespace cimg_library;
 using namespace std;
-
+using namespace std::chrono;
 
 
 

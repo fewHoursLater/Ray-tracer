@@ -9,6 +9,8 @@
 #include "Screen.h"
 #include "Light.h"
 
+
+
 int main()
 {
 	try
@@ -313,6 +315,8 @@ int main()
 			randomColor[1] = L->get_color();
 			randomColor[2] = L->get_color();
 
+			auto start = high_resolution_clock::now();
+
 #pragma omp parallel for
 
 			for (int j = 0; j < screen.get_height(); j++)
@@ -437,6 +441,14 @@ int main()
 						}
 				}
 			}
+
+			auto stop = high_resolution_clock::now();
+
+			auto duration = duration_cast<microseconds>(stop - start);
+
+			cout << "==================" << endl;
+			cout << duration.count() << " microseconds." << endl;
+			cout << "==================" << endl;
 		}
 
 		image.display();
