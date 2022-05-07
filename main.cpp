@@ -238,12 +238,12 @@ int main()
 			throw std::runtime_error("Error.\n");
 		}
 
-		if (camera.get_angle_of_view() <0.0 || camera.get_angle_of_view() >=180.0)
+		if (camera.get_angle_of_view() < 0.0 || camera.get_angle_of_view() >= 180.0)
 		{
 			throw std::runtime_error("Error.\n");
 		}
 
-		if (screen.get_height() <= 0 || screen.get_width() <=0 )
+		if (screen.get_height() <= 0 || screen.get_width() <= 0)
 		{
 			throw std::runtime_error("Error.\n");
 		}
@@ -274,7 +274,7 @@ int main()
 		/// 2. Доработать глянец
 		/// 3. Распределить цвет !
 
-		CImg<unsigned char> image(screen.get_width(), screen.get_height(), 1, 3, 0);
+		CImg<float> image(screen.get_width(), screen.get_height(), 1, 3, 0);
 
 		map<float, Figure*> color_map;
 
@@ -285,7 +285,7 @@ int main()
 
 			float tmp = center_of_body.D_product(tmp_forward);
 
-			color_map.insert(make_pair(tmp,j));
+			color_map.insert(make_pair(tmp, j));
 
 		}
 
@@ -299,24 +299,38 @@ int main()
 
 		map <float, Figure*>::iterator color_it = color_map.begin();
 
-		color_it->second->set_color(191);
+		color_it->second->set_color(64);
 
 		color_it = color_map.end();
 
 		color_it--;
 
-		color_it->second->set_color(64);
+		color_it->second->set_color(191);
 
 		auto start = high_resolution_clock::now();
+
+		Vector_3_float unit_up(up.get_v1(), up.get_v2(), up.get_v3());
+		Vector_3_float unit_tangent(tangent.get_v1(), tangent.get_v2(), tangent.get_v3());
+		Vector_3_float current;
+
+		unit_up.normalize();
+		unit_tangent.normalize();
+
+		unit_tangent = unit_tangent * -1.0;
+
+		Vector_3_float forward = center - viewer;
+
 		for (auto L : shapes)
 		{
-			int randomColor[3];
+			float randomColor[3];
 
-			randomColor[0] = L->get_color();
+			/*randomColor[0] = L->get_color();
 			randomColor[1] = L->get_color();
-			randomColor[2] = L->get_color();
+			randomColor[2] = L->get_color();*/
 
-			
+			randomColor[0] = 255;
+			randomColor[1] = 120;
+			randomColor[2] = 147;
 
 #pragma omp parallel for
 
@@ -324,7 +338,8 @@ int main()
 			{
 				for (int i = 0; i < screen.get_width(); i++)
 				{
-
+					/*if (i == 460 && j == 330)
+					{*/
 						int Cx = 0;
 						int Cy = 0;
 
@@ -353,30 +368,12 @@ int main()
 						float Vx = (float)Cx / (float)screen.get_width(); ///// Объемные координаты точки в плоскости, через которую надо пускать луч
 						float Vy = (float)Cy / (float)screen.get_width();
 
-						Vector_3_float unit_up(up.get_v1(), up.get_v2(), up.get_v3());
-						Vector_3_float unit_tangent(tangent.get_v1(), tangent.get_v2(), tangent.get_v3());
-						Vector_3_float current;
-
-						unit_up.normalize();
-						unit_tangent.normalize();
-
-						unit_tangent = unit_tangent * -1.0; ////////
+						 ////////
 
 						current = unit_up * Vy + unit_tangent * Vx;
 
-						Vector_3_float dir = center + current - viewer;
-
-						//cout << "i am here" << endl;
-
-						float origin_x = viewer.get_v1(); /// Точка из которой должен идти луч. dir - Луч
-						float origin_y = viewer.get_v2();
-						float origin_z = viewer.get_v3();
-
-						float dir1 = dir.get_v1();
-						float dir2 = dir.get_v2();
-						float dir3 = dir.get_v3();
-
-						Vector_3_float forward = center - viewer; // луч, идущий от камеры в центр экрана
+						Vector_3_float dir = center + current - viewer;				
+						 // луч, идущий от камеры в центр экрана
 						Vector_3_float variation = forward + unit_up * Vy;
 
 						if (Greater(forward ^ variation, (camera.get_angle_of_view() / 2.0f)))
@@ -384,68 +381,96 @@ int main()
 							continue;
 						}
 
-						if (L->ray_intersect(origin_x, origin_y, origin_z, dir.get_v1(), dir.get_v2(), dir.get_v3()))
+						if (L->ray_intersect(viewer.get_v1(), viewer.get_v2(), viewer.get_v3(), dir.get_v1(), dir.get_v2(), dir.get_v3())) ////// Взаимодействие с объектом
 						{
-							Vector_3_float point = L->ret_point(origin_x, origin_y, origin_z, dir.get_v1(), dir.get_v2(), dir.get_v3()); // Точка точно на поверхности
-							Vector_3_float normal_surface = L->ret_normal(point.get_v1(), point.get_v2(), point.get_v3()); //  Нормаль из точки, которая уже на поверхности
+							Vector_3_float point = L->ret_point(viewer.get_v1(), viewer.get_v2(), viewer.get_v3(), dir.get_v1(), dir.get_v2(), dir.get_v3()); // Точка точно на поверхности ////// Взаимодействие с объектом
+							Vector_3_float normal_surface = L->ret_normal(point.get_v1(), point.get_v2(), point.get_v3()); //  Нормаль из точки, которая уже на поверхности ////// Взаимодействие с объектом
 
 							normal_surface.normalize();
 
 							Vector_3_float limit = normal * camera.get_dist_spec_scene();
 							Vector_3_float from_center_to_point = point - center;
 
-							if (fabs((from_center_to_point.magnitude()*cos(Pi*(limit^from_center_to_point)/180.0f)- 20.0f)>0.001 || from_center_to_point.magnitude() * cos(Pi * (limit ^ from_center_to_point) / 180.0) < 0.001))
+							if (fabs((from_center_to_point.magnitude() * cos(Pi * (limit ^ from_center_to_point) / 180.0f) - 20.0f) > 0.001 || from_center_to_point.magnitude() * cos(Pi * (limit ^ from_center_to_point) / 180.0) < 0.001))
 							{
 								throw std::runtime_error("Shapes is out of range.\n");
 							}
 
-							Vector_3_float light(lamp.get_x(), lamp.get_y(), lamp.get_z()); // Вектор света
+							Vector_3_float light(lamp.get_x(), lamp.get_y(), lamp.get_z()); // Вектор света до источника света
 							Vector_3_float point_to_lamp = light - point; // Вектор от точки на поверхности до света
 
-							
 							Vector_3_float lamp_to_point = point - light; // От света до точки на поверхности
 							Vector_3_float point_to_camera = viewer - point; // От точки к камере
 
 							point_to_lamp.normalize();
 
-							unsigned char curcolor[3];
+							float curcolor[3];
 
 							curcolor[0] = randomColor[0];
 							curcolor[1] = randomColor[1];
 							curcolor[2] = randomColor[2];
 
+
 							float light_intense = point_to_lamp.D_product(normal_surface);
 
 							if (light_intense <= 0)
 							{
-								curcolor[0] = (char)0;
-								curcolor[1] = (char)0;
-								curcolor[2] = (char)0;
+								curcolor[0] = 0;
+								curcolor[1] = 0;
+								curcolor[2] = 0;
 
 								image.draw_point(i, j, curcolor);
 
 								continue;
 							}
 
-							Vector_3_float reflection = normal_surface * 2.0 * normal_surface.D_product(point_to_lamp) - point_to_lamp; // Отраженнный луч
-																				
-							float shine = 125.0f;
-							float diffuse_coeff = 0.5f;
-							float mirror_coeff = 0.9f;
+							Vector_3_float R = normal_surface * 2.0 * normal_surface.D_product(point_to_lamp) - point_to_lamp; // Отраженнный луч
+							Vector_3_float N = normal_surface;
+							Vector_3_float L = point_to_lamp;
+							Vector_3_float C = point_to_camera;
+							Vector_3_float H = (L + C);
 
-							float phong_intense = -diffuse_coeff * (normal_surface.D_product( lamp_to_point)) + mirror_coeff * pow((normal_surface.D_product(reflection)), shine);
+							float k = 128.0f;
 
-							curcolor[0] = curcolor[1] = curcolor[2] = (curcolor[0] + phong_intense) * light_intense;
+							H.normalize();
+							C.normalize();
+							L.normalize();
+							N.normalize();
+							R.normalize();
+
+							Vector_3_float color(curcolor[0] , curcolor[1] , curcolor[2] );
+
+							float ambientStrength = 0.9;
+							Vector_3_float ambient = color * ambientStrength;
+
+							float diffuse_component = std::max(0.0f, N.D_product(L));
+							Vector_3_float diffuse = color * diffuse_component;
+
+							float specularStrength = 0.9;
+							float specular_component = pow(max(0.0f, R.D_product(C)), k);
+							Vector_3_float specular = color * specularStrength * specular_component;
+
+							Vector_3_float result = (ambient + specular + diffuse);
+
+							curcolor[0] = result.get_v1() * light_intense;
+							curcolor[1] = result.get_v2() * light_intense;
+							curcolor[2] = result.get_v3() * light_intense;
+							
+							/*cout << curcolor[0] << endl;
+							cout << curcolor[1] << endl;
+							cout << curcolor[2] << endl;*/
 
 							image.draw_point(i, j, curcolor);
 
 						}
+					/*}*/
+
 				}
 			}
 
-			
+
 		}
-		
+
 		auto stop = high_resolution_clock::now();
 
 		auto duration = duration_cast<microseconds>(stop - start);
