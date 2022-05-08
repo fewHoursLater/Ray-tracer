@@ -1,27 +1,93 @@
 #include "Header.h"
+#include "Functions.h"
 #include "Screen.h"
+#include "Vector3d.h"
 
-Screen::Screen()
+void Screen::set_center_of_screen(const double x, const double y, const double z)
+{
+	Vector3d tmp(x,y,z);
+
+	center_of_screen = tmp;
+}
+
+void Screen::set_normal_to_screen(const double x, const double y, const double z)
+{
+	Vector3d tmp(x, y, z);
+
+	tmp.normalize();
+
+	if (is_equal(tmp.magnitude(), 0.0))
+	{
+		throw std::runtime_error("The direction of the normal is not defined.\n");
+	}
+	
+	normal = tmp;
+}
+
+void Screen::set_up_direction_on_screen(const double x, const double y, const double z)
+{
+	Vector3d tmp(x, y, z);
+
+	tmp.normalize();
+	
+	if (is_equal(tmp.magnitude(), 0.0))
+	{
+		throw std::runtime_error("The upward direction is not defined.\n");
+	}
+
+	up = tmp;
+}
+
+void Screen::set_width(const int v)
+{
+	
+	if (v <= 0)
+	{
+		throw std::runtime_error("The width must be positive.\n");
+	}
+
+	width_ = v;
+}
+void Screen::set_height(const int v)
+{
+	
+	if (v <= 0)
+	{
+		throw std::runtime_error("The height must be positive.\n");
+	}
+
+	height_ = v;
+}
+
+void Screen::create_tangent_on_screen(void)
 {
 
-	x_ = 0.;
-	y_ = 0.;
-	z_ = 0.;
+	Vector3d tmp(normal.get_v2()*up.get_v3()-normal.get_v3()*up.get_v2(),normal.get_v3()*up.get_v1()-normal.get_v1()*up.get_v3(),normal.get_v1()*up.get_v2()-normal.get_v2()*up.get_v1());
 
-	normal[0] = 1.;
-	normal[1] = 0.;
-	normal[2] = 0.;
+	tmp.normalize();
 
-	up[0] = 0.;
-	up[1] = 0.;
-	up[2] = 1.;
+	tangent = tmp;
 
-	tangent[0] = 0.;
-	tangent[1] = 1.;
-	tangent[2] = 0.;
+}
 
-	width_ = 500;
-	height_ = 500;
+Vector3d Screen::get_center_of_screen(void)
+{
+	return center_of_screen;
+}
+
+Vector3d Screen::get_normal_to_screen(void)
+{
+	return normal;
+}
+
+Vector3d Screen::get_up_direction_on_screen(void)
+{
+	return up;
+}
+
+Vector3d Screen::get_tangent_on_screen(void)
+{
+	return tangent;
 }
 
 int Screen::get_width(void)
@@ -31,118 +97,4 @@ int Screen::get_width(void)
 int Screen::get_height(void)
 {
 	return height_;
-}
-
-void Screen::tangent_(void)
-{
-	tangent[0] = up[1] * normal[2] - up[2] * normal[1];
-	tangent[1] = up[2] * normal[0] - up[0] * normal[2];
-	tangent[2] = up[0] * normal[1] - up[1] * normal[0];
-}
-
-float Screen::get_norm_x(void)
-{
-	return normal[0];
-}
-float Screen::get_norm_y(void)
-{
-	return normal[1];
-}
-float Screen::get_norm_z(void)
-{
-	return normal[2];
-}
-
-float Screen::get_up_x(void)
-{
-	return up[0];
-}
-float Screen::get_up_y(void)
-{
-	return up[1];
-}
-float Screen::get_up_z(void)
-{
-	return up[2];
-}
-
-float Screen::get_tangent_x(void)
-{
-	return tangent[0];
-}
-float Screen::get_tangent_y(void)
-{
-	return tangent[1];
-}
-float Screen::get_tangent_z(void)
-{
-	return tangent[2];
-}
-
-float Screen::get_x(void)
-{
-	return x_;
-}
-float Screen::get_y(void)
-{
-	return y_;
-}
-float Screen::get_z(void)
-{
-	return z_;
-}
-
-void Screen::set_norm_x(const float x)
-{
-	normal[0] = x;
-}
-void Screen::set_norm_y(const float y)
-{
-	normal[1] = y;
-
-}
-void Screen::set_norm_z(const float z)
-{
-	normal[2] = z;
-}
-
-void Screen::set_up_x(const float x)
-{
-	up[0] = x;
-
-}
-void Screen::set_up_y(const float y)
-{
-	up[1] = y;
-}
-void Screen::set_up_z(const float z)
-{
-	up[2] = z;
-}
-
-void Screen::set_x(const float x)
-{
-	x_ = x;
-}
-void Screen::set_y(const float y)
-{
-	y_ = y;
-}
-void Screen::set_z(const float z)
-{
-	z_ = z;
-}
-
-void Screen::set_width(const int v)
-{
-
-	width_ = v;
-}
-void Screen::set_height(const int v)
-{
-	height_ = v;
-}
-
-Screen::~Screen()
-{
 }

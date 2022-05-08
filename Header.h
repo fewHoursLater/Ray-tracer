@@ -22,12 +22,15 @@
 #pragma warning(disable : 4244)
 #pragma warning(disable : 26451) 
 
-constexpr float Pi = 3.141592f;
-constexpr float epsi = 1e-6f;
+constexpr double Pi = 3.1415926535;
+constexpr double epsi = 0.0001;
 
 using namespace cimg_library;
 using namespace std;
 using namespace std::chrono;
+
+
+
 
 
 

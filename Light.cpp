@@ -1,42 +1,16 @@
 #include "Header.h"
+#include "Vector3d.h"
 #include "Light.h"
 
-Light::Light()
+
+void Light::set_position(const double x, const double y, const double z)
 {
-	x_ = 0.;
-	y_ = 0.;
-	z_ = 0.;
+	Vector3d tmp(x, y, z);
+
+	position = tmp;
 }
 
-void Light::set_x(const float x)
+Vector3d Light::get_position(void)
 {
-	x_ = x;
-}
-void Light::set_y(const float y)
-{
-	y_ = y;
-}
-void Light::set_z(const float z)
-{
-	z_ = z;
-}
-
-float Light::get_x()
-{
-	return x_;
-}
-
-float Light::get_y()
-{
-	return y_;
-}
-
-float Light::get_z()
-{
-	return z_;
-}
-
-
-Light::~Light()
-{
+	return position;
 }

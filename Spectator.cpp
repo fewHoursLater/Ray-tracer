@@ -1,69 +1,57 @@
 #include "Header.h"
+#include "Functions.h"
 #include "Spectator.h"
 
-Spectator::Spectator()
+void Spectator::set_position(const double x, const double y, const double z)
 {
-	x_ = 0.;
-	y_ = 0.;
-	z_ = 0.;
+	Vector3d tmp(x, y, z);
 
-	dist_spec_screen_ = 5.;
-	dist_spec_scene_ = 10.;
-	angle_of_view_ = 70.;
+	position = tmp;
 }
 
-void Spectator::set_x(const float x)
+void Spectator::set_dist_spec_screen(const double v)
 {
-	x_ = x;
-}
-void Spectator::set_y(const float y)
-{
-	y_ = y;
-}
-void Spectator::set_z(const float z)
-{
-	z_ = z;
-}
-
-void Spectator::set_dist_spec_screen(const float v)
-{
+	if (Less(v, 0.0, true))
+	{
+		throw std::runtime_error("All distances must be positive.\n");
+	}
 	dist_spec_screen_ = v;
 }
-void Spectator::set_dist_spec_scene(const float v)
+void Spectator::set_dist_screen_scene(const double v)
 {
-	dist_spec_scene_ = v;
+
+	if (Less(v, 0.0, true))
+	{
+		throw std::runtime_error("All distances must be positive.\n");
+	}
+	
+	dist_screen_scene_ = v;
 }
-void Spectator::set_angle_of_view(const float v)
+void Spectator::set_angle_of_view(const double v)
 {
+	
+	if (Less(v, 0.0, true) || Greater(v, 180.0, true))
+	{
+		throw std::runtime_error("Uncorrect viewing angle boundaries.\n");
+	}
+
 	angle_of_view_ = v;
 }
 
-float Spectator::get_x(void)
+Vector3d Spectator::get_position(void)
 {
-	return x_;
-}
-float Spectator::get_y(void)
-{
-	return y_;
-}
-float Spectator::get_z(void)
-{
-	return z_;
+	return position;
 }
 
-float Spectator::get_dist_spec_screen(void)
+double Spectator::get_dist_spec_screen(void)
 {
 	return dist_spec_screen_;
 }
-float Spectator::get_dist_spec_scene(void)
+double Spectator::get_dist_screen_scene(void)
 {
-	return dist_spec_scene_;
+	return dist_screen_scene_;
 }
-float Spectator::get_angle_of_view(void)
+double Spectator::get_angle_of_view(void)
 {
 	return angle_of_view_;
-}
-
-Spectator::~Spectator()
-{
 }

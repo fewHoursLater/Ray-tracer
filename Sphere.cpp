@@ -2,23 +2,14 @@
 #include "Functions.h"
 #include "Figure.h"
 #include "Sphere.h"
-#include "Vector_3_float.h"
+#include "Vector3d.h"
 
-Sphere::Sphere()
+
+Sphere::Sphere(const double x, const double y, const double z, const double R)
 {
-	x_ = 0.;
-	y_ = 0.;
-	z_ = 0.;
-
-	R_ = 1.;
-
-
-}
-Sphere::Sphere(const float x, const float y, const float z, const float R)
-{
-	if (R < 0)
+	if (Less(R,0.0,true))
 	{
-		throw std::runtime_error("Negative radius.\n");
+		throw std::runtime_error("The radius must be positive.\n");
 	}
 
 	x_ = x;
@@ -27,53 +18,52 @@ Sphere::Sphere(const float x, const float y, const float z, const float R)
 	R_ = R;
 }
 
-float Sphere::get_x(void)
+double Sphere::get_x(void)
 {
 	return x_;
 }
-float Sphere::get_y(void)
+double Sphere::get_y(void)
 {
 	return y_;
 }
-float Sphere::get_z(void)
+double Sphere::get_z(void)
 {
 	return z_;
 }
-float Sphere::get_R(void)
+double Sphere::get_R(void)
 {
 	return R_;
 }
 
-bool Sphere::ray_intersect(const float origin_x, const float origin_y, const float origin_z, const float dir_x, const float dir_y, const float dir_z)  // Луч, выходящий из точки в данном направлении пересекает ли сферу?
+bool Sphere::ray_intersect(Vector3d origin, Vector3d direction)  // Луч, выходящий из точки в данном направлении пересекает ли сферу?
 {
 
-	float a = (dir_x * dir_x + dir_y * dir_y + dir_z * dir_z);
-	float b = (2.0 * ((dir_x) * (origin_x - x_) + dir_y * (origin_y - y_) + dir_z * (origin_z - z_)));
-	float c = origin_x * origin_x + origin_y * origin_y + origin_z * origin_z + x_ * x_ + y_ * y_ + z_ * z_ - 2.0 * ((origin_x * x_) + origin_y * y_ + origin_z * z_) - (R_ * R_);
+	double a = (direction.get_v1() * direction.get_v1() + direction.get_v2() * direction.get_v2() + direction.get_v3() * direction.get_v3());
+	double b = (2.0 * ((direction.get_v1()) * (origin.get_v1() - x_) + direction.get_v2() * (origin.get_v2() - y_) + direction.get_v3() * (origin.get_v3() - z_)));
+	double c = origin.get_v1() * origin.get_v1() + origin.get_v2() * origin.get_v2() + origin.get_v3() * origin.get_v3() + x_ * x_ + y_ * y_ + z_ * z_ - 2.0 * ((origin.get_v1() * x_) + origin.get_v2() * y_ + origin.get_v3() * z_) - (R_ * R_);
 
-	float D = b * b - 4.0 * a * c;
+	double D = b * b - 4.0 * a * c;
 
-	if (Less(D, 0.0f))
+	if (Less(D, 0.0))
 	{
 		return false;
 	}
 
-	if (is_equal(a, 0.0f))
+	if (is_equal(a, 0.0))
 	{
-		cout << "Error." << endl;
+		throw std::runtime_error("Unexpected error.\n");
 	}
 
-	float t = (-b - sqrtf(D)) / (2.0f * a);
+	double t = (-b - sqrt(D)) / (2.0 * a);
 
-
-	if (Greater(D, 0.0f) || is_equal(D, 0.0))
+	if (Greater(D, 0.0) || is_equal(D, 0.0))
 	{
-		if (Greater(t, 0.0f))
+		if (Greater(t, 0.0))
 		{
 			return true;
 		}
 
-		if (Less(t, 0.0f))
+		if (Less(t, 0.0))
 		{
 			return false;
 		}
@@ -85,60 +75,60 @@ bool Sphere::ray_intersect(const float origin_x, const float origin_y, const flo
 }
 
 
-Vector_3_float Sphere::ret_point(const float origin_x, const float origin_y, const float origin_z, const float dir_x, const float dir_y, const float dir_z)
+Vector3d Sphere::ret_point(Vector3d origin, Vector3d direction)
 {
-	float a = dir_x * dir_x + dir_y * dir_y + dir_z * dir_z;
-	float b = 2.0f * (dir_x * (origin_x - x_) + dir_y * (origin_y - y_) + dir_z * (origin_z - z_));
-	float c = origin_x * origin_x + origin_y * origin_y + origin_z * origin_z + x_ * x_ + y_ * y_ + z_ * z_ - 2.0f * (origin_x * x_ + origin_y * y_ + origin_z * z_) - R_ * R_;
+	double a = (direction.get_v1() * direction.get_v1() + direction.get_v2() * direction.get_v2() + direction.get_v3() * direction.get_v3());
+	double b = (2.0 * ((direction.get_v1()) * (origin.get_v1() - x_) + direction.get_v2() * (origin.get_v2() - y_) + direction.get_v3() * (origin.get_v3() - z_)));
+	double c = origin.get_v1() * origin.get_v1() + origin.get_v2() * origin.get_v2() + origin.get_v3() * origin.get_v3() + x_ * x_ + y_ * y_ + z_ * z_ - 2.0 * ((origin.get_v1() * x_) + origin.get_v2() * y_ + origin.get_v3() * z_) - (R_ * R_);
 
-	float D = b * b - 4.0f * a * c;
+	double D = b * b - 4.0 * a * c;
 
-	float t = (-b - sqrtf(D)) / (2.0f * a);
+	double t = (-b - sqrt(D)) / (2.0 * a);
 
-	Vector_3_float pixel(origin_x + dir_x * t, origin_y + dir_y * t, origin_z + dir_z * t);
+	Vector3d point = origin + direction * t;
 
-	return pixel;
+	return point;
 }
 
-Vector_3_float Sphere::ret_normal(const float x, const float y, const float z)
+Vector3d Sphere::ret_normal(Vector3d point)
 {
-	Vector_3_float normal_surface(x - x_, y - y_, z - z_);
+	Vector3d normal_surface(point.get_v1() - x_, point.get_v2() - y_, point.get_v3() - z_);
+
+	normal_surface.normalize();
 
 	return normal_surface;
 }
 
-void Sphere::set_x(const float x)
+void Sphere::set_x(const double x)
 {
 	x_ = x;
 }
-void Sphere::set_y(const float y)
+void Sphere::set_y(const double y)
 {
 	y_ = y;
 }
-void Sphere::set_z(const float z)
+void Sphere::set_z(const double z)
 {
 	z_ = z;
 }
-void Sphere::set_R(const float R)
+void Sphere::set_R(const double R)
 {
 	R_ = R;
 }
 
-Vector_3_float Sphere::return_centroid()
+Vector3d Sphere::return_centroid(void)
 {
-	return Vector_3_float(x_, y_, z_);
+	Vector3d tmp(x_, y_, z_);
+
+	return tmp;
 }
 
-void Sphere::set_color(int color_)
+void Sphere::set_color(const int color)
 {
-	color = color_;
+	color_ = color;
 }
 
-int Sphere::get_color()
+int Sphere::get_color(void)
 {
-	return color;
-}
-
-Sphere::~Sphere()
-{
+	return color_;
 }

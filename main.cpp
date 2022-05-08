@@ -1,6 +1,6 @@
 #include "Header.h"
 #include "Functions.h"
-#include "Vector_3_float.h"
+#include "Vector3d.h"
 #include "Figure.h"
 #include "Sphere.h"
 #include "Box.h"
@@ -10,9 +10,49 @@
 #include "Light.h"
 
 
-
 int main()
 {
+
+	/*map<int, int> pair;
+
+	pair.insert(make_pair(5, 543));
+	pair.insert(make_pair(1, 542));
+	pair.insert(make_pair(2, 541));
+	pair.insert(make_pair(4, 544));
+	pair.insert(make_pair(3, 545));
+
+	for (auto& i : pair)
+	{
+		std::cout << i.first << " " << i.second << endl;
+	}
+
+	cout << pair.size() << endl;
+
+	return 1;*/
+
+
+
+	//***** Throw не работает при parallel for *****//
+
+//	try
+//	{
+//#pragma omp parallel for
+//		for (int t = 0; t < 10; t++)
+//		{
+//			if (t == 5)
+//			{
+//				cout << "errrr" << endl;
+//				throw std::runtime_error("err");
+//			}
+//		}
+//	}
+//	catch (const std::exception& e)
+//	{
+//		std::cerr << e.what() << endl;
+//		return 1;
+//	}
+
+
 	try
 	{
 		Spectator camera;
@@ -48,81 +88,64 @@ int main()
 
 			if (mark == "cam")
 			{
-				float v1;
-				float v2;
-				float v3;
+				double v1;
+				double v2;
+				double v3;
 
 				str_stream >> v1;
 				str_stream >> v2;
 				str_stream >> v3;
 
-				camera.set_x(v1);
-				camera.set_y(v2);
-				camera.set_z(v3);
+				camera.set_position(v1, v2, v3);
 			}
 
 			if (mark == "normal")
 			{
-				float v1;
-				float v2;
-				float v3;
+				double v1;
+				double v2;
+				double v3;
 
 				str_stream >> v1;
 				str_stream >> v2;
 				str_stream >> v3;
 
-				screen.set_norm_x(v1);
-				screen.set_norm_y(v2);
-				screen.set_norm_z(v3);
-
-				Vector_3_float tmp(v1, v2, v3);
-
-				if (tmp.magnitude() == 0)
-				{
-					throw std::runtime_error("Error.\n");
-				}
+				screen.set_normal_to_screen(v1,v2,v3);
 
 			}
 
 			if (mark == "up")
 			{
-				float v1;
-				float v2;
-				float v3;
+				double v1;
+				double v2;
+				double v3;
 
 				str_stream >> v1;
 				str_stream >> v2;
 				str_stream >> v3;
 
-				screen.set_up_x(v1);
-				screen.set_up_y(v2);
-				screen.set_up_z(v3);
+				screen.set_up_direction_on_screen(v1, v2, v3);
 
 			}
 
 			if (mark == "screen")
 			{
-				float v1;
+				double v1;
 				str_stream >> v1;
 				camera.set_dist_spec_screen(v1);
 
-				if (v1 <= 0.0)
-				{
-					throw std::runtime_error("Error.\n");
-				}
 			}
 
 			if (mark == "limit")
 			{
-				float v1;
+				double v1;
 				str_stream >> v1;
-				camera.set_dist_spec_scene(v1);
+				camera.set_dist_screen_scene(v1);
 
 			}
 
 			if (mark == "alpha")
 			{
-				float v1;
+				double v1;
 				str_stream >> v1;
 				camera.set_angle_of_view(v1);
 
@@ -144,25 +167,23 @@ int main()
 
 			if (mark == "light")
 			{
-				float v1;
-				float v2;
-				float v3;
+				double v1;
+				double v2;
+				double v3;
 
 				str_stream >> v1;
 				str_stream >> v2;
 				str_stream >> v3;
 
-				lamp.set_x(v1);
-				lamp.set_y(v2);
-				lamp.set_z(v3);
+				lamp.set_position(v1, v2, v3);
 			}
 
 			if (mark == "sphere")
 			{
-				float v1;
-				float v2;
-				float v3;
-				float r;
+				double v1;
+				double v2;
+				double v3;
+				double r;
 
 				str_stream >> v1;
 				str_stream >> v2;
@@ -175,13 +196,13 @@ int main()
 
 			if (mark == "box")
 			{
-				float v1;
-				float v2;
-				float v3;
+				double v1;
+				double v2;
+				double v3;
 
-				float w1;
-				float w2;
-				float w3;
+				double w1;
+				double w2;
+				double w3;
 
 				str_stream >> v1;
 				str_stream >> v2;
@@ -197,21 +218,21 @@ int main()
 
 			if (mark == "tetra")
 			{
-				float a1;
-				float a2;
-				float a3;
+				double a1;
+				double a2;
+				double a3;
 
-				float b1;
-				float b2;
-				float b3;
+				double b1;
+				double b2;
+				double b3;
 
-				float c1;
-				float c2;
-				float c3;
+				double c1;
+				double c2;
+				double c3;
 
-				float d1;
-				float d2;
-				float d3;
+				double d1;
+				double d2;
+				double d3;
 
 				str_stream >> a1;
 				str_stream >> a2;
@@ -229,117 +250,82 @@ int main()
 				str_stream >> d2;
 				str_stream >> d3;
 
-				shapes.push_back(new Tetrahedron(a1, a2, a3, b1, b2, b3, c1, c2, c3, d1, d2, d3));
+				shapes.push_back(new Tetrahedron((double)a1, (double)a2, (double)a3, (double)b1, (double)b2, (double)b3, (double)c1, (double)c2, (double)c3, (double)d1, (double)d2, (double)d3));
 			}
 		}
 
-		if (camera.get_dist_spec_scene() <= camera.get_dist_spec_screen())
+		screen.create_tangent_on_screen();
+
+		Vector3d normal_to_screen = screen.get_normal_to_screen();
+		Vector3d up_on_screen = screen.get_up_direction_on_screen();
+		Vector3d tangent_on_screen = screen.get_tangent_on_screen();
+
+		screen.set_center_of_screen((camera.get_position().get_v1()+camera.get_dist_spec_screen()*normal_to_screen.get_v1()),(camera.get_position().get_v2() + camera.get_dist_spec_screen() * normal_to_screen.get_v2()),(camera.get_position().get_v3() + camera.get_dist_spec_screen() * normal_to_screen.get_v3()));
+
+		Vector3d center_of_screen = screen.get_center_of_screen();
+		Vector3d spectator_position = camera.get_position();
+
+		if (fabs((up_on_screen ^ normal_to_screen) - 90.0) > 0.0001)
 		{
-			throw std::runtime_error("Error.\n");
+			throw std::runtime_error("Wrong angle betwen normal and up.\n");
 		}
 
-		if (camera.get_angle_of_view() < 0.0 || camera.get_angle_of_view() >= 180.0)
-		{
-			throw std::runtime_error("Error.\n");
-		}
-
-		if (screen.get_height() <= 0 || screen.get_width() <= 0)
-		{
-			throw std::runtime_error("Error.\n");
-		}
-
-		screen.tangent_();
-
-		Vector_3_float normal(screen.get_norm_x(), screen.get_norm_y(), screen.get_norm_z());
-		Vector_3_float up(screen.get_up_x(), screen.get_up_y(), screen.get_up_z());
-		Vector_3_float tangent(screen.get_tangent_x(), screen.get_tangent_y(), screen.get_tangent_z());
-
-		normal.normalize();
-		up.normalize();
-		tangent.normalize();
-
-		screen.set_x(camera.get_x() + (camera.get_dist_spec_screen() * screen.get_norm_x()) / normal.magnitude()); /// Координаты центра Экрана
-		screen.set_y(camera.get_y() + (camera.get_dist_spec_screen() * screen.get_norm_y()) / normal.magnitude());
-		screen.set_z(camera.get_z() + (camera.get_dist_spec_screen() * screen.get_norm_z()) / normal.magnitude());
-
-		Vector_3_float center(screen.get_x(), screen.get_y(), screen.get_z());
-		Vector_3_float viewer(camera.get_x(), camera.get_y(), camera.get_z());
-
-		if (fabs((up ^ normal) - 90.0f) > 0.0001)
-		{
-			throw std::runtime_error("Wrong angle betwen normal and up\n");
-		}
-
-		/// 1. Все точки фигур должны быть между двумя плоскостями !
-		/// 2. Доработать глянец
-		/// 3. Распределить цвет !
-
-		CImg<float> image(screen.get_width(), screen.get_height(), 1, 3, 0);
-
-		map<float, Figure*> color_map;
-
-		for (auto j : shapes)
-		{
-			Vector_3_float center_of_body = j->return_centroid();
-			Vector_3_float tmp_forward = center - viewer;
-
-			float tmp = center_of_body.D_product(tmp_forward);
-
-			color_map.insert(make_pair(tmp, j));
-
-		}
-
-		int g = 0;
-
-		for (auto y : color_map)
-		{
-			y.second->set_color(64 + 8 * g);
-			g++;
-		}
-
-		map <float, Figure*>::iterator color_it = color_map.begin();
-
-		color_it->second->set_color(64);
-
-		color_it = color_map.end();
-
-		color_it--;
-
-		color_it->second->set_color(191);
+		CImg<double> image(screen.get_width(), screen.get_height(), 1, 3, 0);
 
 		auto start = high_resolution_clock::now();
 
-		Vector_3_float unit_up(up.get_v1(), up.get_v2(), up.get_v3());
-		Vector_3_float unit_tangent(tangent.get_v1(), tangent.get_v2(), tangent.get_v3());
-		Vector_3_float current;
+		Vector3d current;
 
-		unit_up.normalize();
-		unit_tangent.normalize();
+		Vector3d forward = center_of_screen - spectator_position;
 
-		unit_tangent = unit_tangent * -1.0;
 
-		Vector_3_float forward = center - viewer;
+
+		Vector3d from_spectator_to_center_of_figure;
+
+		map<double, Figure*> distribution;
+
+		for (auto P : shapes)
+		{
+			from_spectator_to_center_of_figure = P->return_centroid() - spectator_position;
+
+			double dist = from_spectator_to_center_of_figure.magnitude();
+
+			distribution.insert(make_pair(dist, P));
+
+		}
+
+		int g = 1;
+
+		for (auto& i : distribution)
+		{
+
+			if (g == distribution.size() && g!= 1)
+			{
+				i.second->set_color(191);
+				continue;
+			}
+
+			i.second->set_color(64 + 16*(g-1));
+
+			g++;
+		}
 
 		for (auto L : shapes)
 		{
-			float randomColor[3];
+			double object_color[3];
 
-			/*randomColor[0] = L->get_color();
-			randomColor[1] = L->get_color();
-			randomColor[2] = L->get_color();*/
-
-			randomColor[0] = 255;
-			randomColor[1] = 120;
-			randomColor[2] = 147;
+			object_color[0] = L->get_color();
+			object_color[1] = L->get_color();
+			object_color[2] = L->get_color();
+			
 
 #pragma omp parallel for
-
+			
 			for (int j = 0; j < screen.get_height(); j++)
 			{
 				for (int i = 0; i < screen.get_width(); i++)
 				{
-					/*if (i == 460 && j == 330)
-					{*/
+					
 						int Cx = 0;
 						int Cy = 0;
 
@@ -363,74 +349,67 @@ int main()
 							Cy = ((screen.get_height() - 1) / 2) - j;
 						}
 
-						//// Cx, Cy - координаты точки в плоскости экрана, через которую надо пускать луч, которую надо красить
+						double Vx = (double)Cx / (double)screen.get_width();
+						double Vy = (double)Cy / (double)screen.get_width();
 
-						float Vx = (float)Cx / (float)screen.get_width(); ///// Объемные координаты точки в плоскости, через которую надо пускать луч
-						float Vy = (float)Cy / (float)screen.get_width();
+						current = up_on_screen * Vy + tangent_on_screen * Vx;
 
-						 ////////
+						Vector3d ray_direction = center_of_screen + current - spectator_position;
+						Vector3d ray_origin = spectator_position;
 
-						current = unit_up * Vy + unit_tangent * Vx;
+						Vector3d variation = forward + up_on_screen * Vy;
 
-						Vector_3_float dir = center + current - viewer;				
-						 // луч, идущий от камеры в центр экрана
-						Vector_3_float variation = forward + unit_up * Vy;
-
-						if (Greater(forward ^ variation, (camera.get_angle_of_view() / 2.0f)))
+						if (Greater(forward ^ variation, (camera.get_angle_of_view() / 2.0)))
 						{
 							continue;
 						}
 
-						if (L->ray_intersect(viewer.get_v1(), viewer.get_v2(), viewer.get_v3(), dir.get_v1(), dir.get_v2(), dir.get_v3())) ////// Взаимодействие с объектом
+						if (L->ray_intersect(ray_origin, ray_direction))
 						{
-							Vector_3_float point = L->ret_point(viewer.get_v1(), viewer.get_v2(), viewer.get_v3(), dir.get_v1(), dir.get_v2(), dir.get_v3()); // Точка точно на поверхности ////// Взаимодействие с объектом
-							Vector_3_float normal_surface = L->ret_normal(point.get_v1(), point.get_v2(), point.get_v3()); //  Нормаль из точки, которая уже на поверхности ////// Взаимодействие с объектом
+							Vector3d point_on_object = L->ret_point(ray_origin, ray_direction);
+							Vector3d normal_to_object = L->ret_normal(point_on_object);
 
-							normal_surface.normalize();
+							Vector3d from_center_of_screen_to_point = point_on_object - center_of_screen;
 
-							Vector_3_float limit = normal * camera.get_dist_spec_scene();
-							Vector_3_float from_center_to_point = point - center;
+							double projection = from_center_of_screen_to_point.D_product(normal_to_screen);
 
-							if (fabs((from_center_to_point.magnitude() * cos(Pi * (limit ^ from_center_to_point) / 180.0f) - 20.0f) > 0.001 || from_center_to_point.magnitude() * cos(Pi * (limit ^ from_center_to_point) / 180.0) < 0.001))
+							/*if (Greater(projection, camera.get_dist_screen_scene()) || projection < 0.001) /// Throw не работает при parallel for
 							{
-								throw std::runtime_error("Shapes is out of range.\n");
-							}
+								throw std::runtime_error("Some figure has gone beyond the boundaries.\n");
+							}*/
 
-							Vector_3_float light(lamp.get_x(), lamp.get_y(), lamp.get_z()); // Вектор света до источника света
-							Vector_3_float point_to_lamp = light - point; // Вектор от точки на поверхности до света
+							Vector3d light_position = lamp.get_position();
+							Vector3d from_point_on_object_to_lamp = light_position - point_on_object;
+							Vector3d from_point_on_object_to_camera = spectator_position - point_on_object;
 
-							Vector_3_float lamp_to_point = point - light; // От света до точки на поверхности
-							Vector_3_float point_to_camera = viewer - point; // От точки к камере
+							from_point_on_object_to_lamp.normalize();
 
-							point_to_lamp.normalize();
+							double cur_color[3];
 
-							float curcolor[3];
+							double light_intense = from_point_on_object_to_lamp.D_product(normal_to_object);
 
-							curcolor[0] = randomColor[0];
-							curcolor[1] = randomColor[1];
-							curcolor[2] = randomColor[2];
-
-
-							float light_intense = point_to_lamp.D_product(normal_surface);
-
-							if (light_intense <= 0)
+							if (light_intense <= 0.0)
 							{
-								curcolor[0] = 0;
-								curcolor[1] = 0;
-								curcolor[2] = 0;
+								cur_color[0] = 0.0;
+								cur_color[1] = 0.0;
+								cur_color[2] = 0.0;
 
-								image.draw_point(i, j, curcolor);
+								image.draw_point(i, j, cur_color);
 
 								continue;
 							}
 
-							Vector_3_float R = normal_surface * 2.0 * normal_surface.D_product(point_to_lamp) - point_to_lamp; // Отраженнный луч
-							Vector_3_float N = normal_surface;
-							Vector_3_float L = point_to_lamp;
-							Vector_3_float C = point_to_camera;
-							Vector_3_float H = (L + C);
+							cur_color[0] = object_color[0] * light_intense;
+							cur_color[1] = object_color[1] * light_intense;
+							cur_color[2] = object_color[2] * light_intense;
 
-							float k = 128.0f;
+							Vector3d R = normal_to_object * 2.0 * normal_to_object.D_product(from_point_on_object_to_lamp) - from_point_on_object_to_lamp;
+							Vector3d N = normal_to_object;
+							Vector3d L = from_point_on_object_to_lamp;
+							Vector3d C = from_point_on_object_to_camera;
+							Vector3d H = (L + C);
+
+							double k = 128.0;
 
 							H.normalize();
 							C.normalize();
@@ -438,51 +417,45 @@ int main()
 							N.normalize();
 							R.normalize();
 
-							Vector_3_float color(curcolor[0] , curcolor[1] , curcolor[2] );
+							Vector3d color(cur_color[0], cur_color[1], cur_color[2]);
 
-							float ambientStrength = 0.9;
-							Vector_3_float ambient = color * ambientStrength;
+							double ambientStrength = 0.9;
+							Vector3d ambient = color * ambientStrength;
 
-							float diffuse_component = std::max(0.0f, N.D_product(L));
-							Vector_3_float diffuse = color * diffuse_component;
+							double diffuse_component = std::max(0.0, N.D_product(L));
+							Vector3d diffuse = color * diffuse_component;
 
-							float specularStrength = 0.9;
-							float specular_component = pow(max(0.0f, R.D_product(C)), k);
-							Vector_3_float specular = color * specularStrength * specular_component;
+							double specularStrength = 0.9;
+							double specular_component = pow(max(0.0, R.D_product(C)), k);
+							Vector3d specular = color * specularStrength * specular_component;
 
-							Vector_3_float result = (ambient + specular + diffuse);
+							Vector3d result = (ambient + specular + diffuse);
 
-							curcolor[0] = result.get_v1() * light_intense;
-							curcolor[1] = result.get_v2() * light_intense;
-							curcolor[2] = result.get_v3() * light_intense;
-							
-							/*cout << curcolor[0] << endl;
-							cout << curcolor[1] << endl;
-							cout << curcolor[2] << endl;*/
+							cur_color[0] = result.get_v1();
+							cur_color[1] = result.get_v2();
+							cur_color[2] = result.get_v3();
 
-							image.draw_point(i, j, curcolor);
+							image.draw_point(i, j, cur_color);
 
-						}
-					/*}*/
-
+						}	
 				}
 			}
-
-
 		}
 
 		auto stop = high_resolution_clock::now();
 
 		auto duration = duration_cast<microseconds>(stop - start);
 
-		cout << "==================" << endl;
-		cout << duration.count() << " microseconds." << endl;
-		cout << "==================" << endl;
+		std::cout << "--------------" << endl;
+		std::cout << duration.count() << " mcs spent." << endl;
+		std::cout << "--------------" << endl;
 
 		image.display();
 
 		image.normalize(0, 255);
 		image.save_bmp("render.bmp");
+
+		std::cout << "Rendering is complete.\n";
 
 		return 0;
 	}

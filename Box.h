@@ -1,23 +1,24 @@
 #pragma once
 
 #include "Header.h"
-#include "Vector_3_float.h"
+#include "Figure.h"
+#include "Vector3d.h"
 
 class Box : public Figure
 {
 private:
-	Vector_3_float begin;
-	Vector_3_float end;
+	Vector3d begin;
+	Vector3d end;
 
 public:
-	Box();
-	Box(const float, const float, const float, const float, const float, const float);
-	~Box();
+	
+	Box() = default;
+	Box(const double, const double, const double, const double, const double, const double);
 
-	bool ray_intersect(const float, const float, const float, const float, const float, const float) override;
-	Vector_3_float ret_point(const float, const float, const float, const float, const float, const float) override;
-	Vector_3_float ret_normal(const float, const float, const float) override;
-	Vector_3_float return_centroid() override;
+	bool ray_intersect(Vector3d, Vector3d) override;
+	Vector3d ret_point(Vector3d, Vector3d) override;
+	Vector3d ret_normal(Vector3d) override;
+	Vector3d return_centroid() override;
 
 	void set_color(int) override;
 	int get_color() override;

@@ -4,8 +4,8 @@ project(Ray_tracer)
 
 #aux_source_directory(. SRC_LIST)
 
-set(Ray_tracer_SRC main.cpp Vector_3_float.cpp Figure.cpp Box.cpp Sphere.cpp Tetrahedron.cpp Spectator.cpp Light.cpp Screen.cpp Functions.cpp)
-set(Ray_tracer_HDR Header.h Vector_3_float.h Figure.h Box.h Sphere.h Tetrahedron.h Spectator.h Light.h Screen.h Functions.h CImg.h)
+set(Ray_tracer_SRC main.cpp Box.cpp Functions.cpp Light.cpp Screen.cpp Spectator.cpp Sphere.cpp Tetrahedron.cpp Vector3d.cpp)
+set(Ray_tracer_HDR Box.h CImg.h Figure.h Functions.h Header.h Light.h Screen.h Spectator.h Sphere.h Tetrahedron.h Vector3d.h)
 
 add_executable(${PROJECT_NAME} ${Ray_tracer_SRC} ${Ray_tracer_HDR})
 

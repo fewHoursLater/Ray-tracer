@@ -1,25 +1,18 @@
 #pragma once
 
 #include "Header.h"
+#include "Vector3d.h"
 
 class Light
 {
 private:
 
-	float x_;
-	float y_;
-	float z_;
+	Vector3d position;
 
 public:
-	Light();
-	~Light();
+	
+	void set_position(const double, const double, const double);
 
-	void set_x(const float);
-	void set_y(const float);
-	void set_z(const float);
-
-	float get_x();
-	float get_y();
-	float get_z();
+	Vector3d get_position(void);
 
 };

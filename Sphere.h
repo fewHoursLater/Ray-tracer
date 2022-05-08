@@ -1,38 +1,39 @@
 #pragma once
 
 #include "Header.h"
-#include "Vector_3_float.h"
+#include "Figure.h"
+#include "Vector3d.h"
 
 class Sphere : public Figure
 {
 private:
 
-	float x_;
-	float y_;
-	float z_;
+	Vector3d center;
 
-	float R_;
+	double x_;
+	double y_;
+	double z_;
+
+	double R_;
 
 public:
-	Sphere();
-	Sphere(const float, const float, const float, const float);
-	~Sphere();
+	Sphere(const double, const double, const double, const double);
+	
+	void set_x(const double);
+	void set_y(const double);
+	void set_z(const double);
+	void set_R(const double);
 
-	void set_x(const float);
-	void set_y(const float);
-	void set_z(const float);
-	void set_R(const float);
+	bool ray_intersect(Vector3d, Vector3d) override;
+	Vector3d ret_point(Vector3d, Vector3d) override;
+	Vector3d ret_normal(Vector3d) override;
+	Vector3d return_centroid(void) override;
 
-	bool ray_intersect(const float, const float, const float, const float, const float, const float) override;
-	Vector_3_float ret_point(const float, const float, const float, const float, const float, const float) override;
-	Vector_3_float ret_normal(const float, const float, const float) override;
-	Vector_3_float return_centroid() override;
+	void set_color(const int) override;
+	int get_color(void) override;
 
-	void set_color(int) override;
-	int get_color() override;
-
-	float get_x(void);
-	float get_y(void);
-	float get_z(void);
-	float get_R(void);
+	double get_x(void);
+	double get_y(void);
+	double get_z(void);
+	double get_R(void);
 };
