@@ -1,4 +1,5 @@
 <ol type="I">
+<li></li>
 <p>cam -5.0 0.0 0.0<br>
 normal 1.0 0.0 0.0<br>
 up 0.0 1.0 0.0<br>
