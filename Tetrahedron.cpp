@@ -22,22 +22,7 @@ Tetrahedron::Tetrahedron( double x1,  double y1,  double z1,  double x2,  double
 
 bool Tetrahedron::ray_intersect(Vector3d origin, Vector3d direction)
 {
-	if (Triangle_intersection(origin,direction,first_vertex,second_vertex,third_vertex))
-	{
-		return true;
-	}
-
-	if (Triangle_intersection(origin, direction, second_vertex, third_vertex, fourth_vertex))
-	{
-		return true;
-	}
-
-	if (Triangle_intersection(origin, direction, first_vertex, second_vertex, fourth_vertex))
-	{
-		return true;
-	}
-
-	if (Triangle_intersection(origin, direction, first_vertex, third_vertex, fourth_vertex))
+	if (Triangle_intersection(origin,direction,first_vertex,second_vertex,third_vertex) || Triangle_intersection(origin, direction, second_vertex, third_vertex, fourth_vertex) || Triangle_intersection(origin, direction, first_vertex, second_vertex, fourth_vertex) || Triangle_intersection(origin, direction, first_vertex, third_vertex, fourth_vertex))
 	{
 		return true;
 	}
@@ -56,7 +41,7 @@ Vector3d Tetrahedron::ret_normal(Vector3d point)
 
 		Vector3d N = u.V_product(v);
 
-		if (N.D_product(inside)> 0.0001)  ////////////////
+		if (N.D_product(inside)> 0.0)  ////////////////
 		{
 			N = N * (-1.0);
 		}
@@ -77,7 +62,7 @@ Vector3d Tetrahedron::ret_normal(Vector3d point)
 
 		Vector3d N = u.V_product(v);
 
-		if (N.D_product(inside) > 0.0001)  ////////////////
+		if (N.D_product(inside) > 0.0)  ////////////////
 		{
 			N = N * (-1.0);
 		}
@@ -96,7 +81,7 @@ Vector3d Tetrahedron::ret_normal(Vector3d point)
 
 		Vector3d N = u.V_product(v);
 
-		if (N.D_product(inside) > 0.0001)  ////////////////
+		if (N.D_product(inside) > 0.0)  ////////////////
 		{
 			N = N * (-1.0);
 		}
@@ -115,7 +100,7 @@ Vector3d Tetrahedron::ret_normal(Vector3d point)
 
 		Vector3d N = u.V_product(v);
 
-		if (N.D_product(inside) > 0.0001)  ////////////////
+		if (N.D_product(inside) > 0.0)  ////////////////
 		{
 			N = N * (-1.0);
 		}
@@ -124,6 +109,8 @@ Vector3d Tetrahedron::ret_normal(Vector3d point)
 
 		return N;
 	}
+
+	return Vector3d(0, 0, 0);
 }
 
 

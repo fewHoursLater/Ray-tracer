@@ -7,18 +7,16 @@
 Box::Box(const double x1, const double y1, const double z1, const double x2, const double y2, const double z2)
 {
 
-	if (Less(x2,x1,true) || Less(y2, y1, true)|| Less(z2, z1, true))
+	if (Less(x2, x1, true) || Less(y2, y1, true) || Less(z2, z1, true))
 	{
 		throw std::runtime_error("The diagonal of the box should be directed to the first quadrant.\n");
 	}
-
 
 	Vector3d A(x1, y1, z1);
 	Vector3d B(x2, y2, z2);
 
 	begin = A;
 	end = B;
-
 }
 
 bool Box::ray_intersect(Vector3d origin, Vector3d direction)
@@ -144,6 +142,26 @@ Vector3d Box::ret_point(Vector3d origin, Vector3d direction)
 	if (parameters.capacity() == 2)
 	{
 		min_t = min(parameters[0], parameters[1]);
+	}
+
+	if (parameters.capacity() == 3)
+	{
+		min_t = min(min(parameters[0],parameters[1]),parameters[2]);
+	}
+
+	if (parameters.capacity() == 4)
+	{
+		min_t = min(min(parameters[0], parameters[1]), min(parameters[2], parameters[3]));
+	}
+
+	if (parameters.capacity() == 5)
+	{
+		min_t = min(min(min(parameters[0], parameters[1]), min(parameters[2], parameters[3])), parameters[4]);
+	}
+
+	if (parameters.capacity() == 6)
+	{
+		min_t = min(min(min(min(parameters[0], parameters[1]),min(parameters[2], parameters[3])), parameters[4]),parameters[5]);
 	}
 
 	Vector3d tmp = origin + direction * min_t;

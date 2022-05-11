@@ -17,7 +17,6 @@ private:
 
 public:
 
-
 	void set_center_of_screen(const double, const double, const double);
 	void set_normal_to_screen(const double, const double, const double);
 	void set_up_direction_on_screen(const double, const double, const double);

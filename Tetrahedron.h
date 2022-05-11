@@ -7,12 +7,10 @@
 class Tetrahedron : public Figure
 {
 private:
-
 	Vector3d first_vertex;
 	Vector3d second_vertex;
 	Vector3d third_vertex;
 	Vector3d fourth_vertex;
-
 
 public:
 

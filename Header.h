@@ -19,11 +19,9 @@
 #include <chrono>
 #include "CImg.h"
 
-#pragma warning(disable : 4244)
-#pragma warning(disable : 26451) 
 
 constexpr double Pi = 3.1415926535;
-constexpr double epsi = 0.0001;
+constexpr double epsi = 1e-6;
 
 using namespace cimg_library;
 using namespace std;

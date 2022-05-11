@@ -6,7 +6,7 @@ bool is_equal(double left, double right)
 	return (fabs(left - right) < epsi);
 }
 
-bool Less(double left, double right, bool orequal) // Добавить true в параметры, будет <=
+bool Less(double left, double right, bool orequal)
 {
 
 	if (fabs(left - right) < epsi)
@@ -18,7 +18,7 @@ bool Less(double left, double right, bool orequal) // Добавить true в параметры,
 
 }
 
-bool Greater(double left, double right, bool orequal) // Добавить true в параметры, будет >=
+bool Greater(double left, double right, bool orequal)
 {
 
 	if (fabs(left - right) < epsi)
@@ -49,13 +49,12 @@ bool Triangle_intersection(Vector3d origin, Vector3d direction, Vector3d v0, Vec
 
 	double t = AO.D_product(N) * inv_det;
 
-	return (fabs(det) >= 1e-8 && t >= 1e-6 && u >= 1e-6 && v >= 1e-6 && (u + v) <= 1.0); ////////////////
+	return (fabs(det) >= 1e-6 && t >= 0.0 && u >= 0.0 && v >= 0.0 && (u + v) <= 1.0);
 
 }
 
 bool Triangle_intersection_for_point(Vector3d origin, Vector3d direction, Vector3d v0, Vector3d v1, Vector3d v2, double& t)
 {
-
 	Vector3d E1 = v1 - v0;
 	Vector3d E2 = v2 - v0;
 
@@ -72,7 +71,7 @@ bool Triangle_intersection_for_point(Vector3d origin, Vector3d direction, Vector
 
 	t = AO.D_product(N) * inv_det;
 
-	return (fabs(det) >= 1e-6 && t >= 1e-6 && u >= 1e-6 && v >= 1e-6 && (u + v) <= 1.0);  ////////////////
+	return (fabs(det) >= 1e-6 && t >= 0.0 && u >= 0.0 && v >= 0.0 && (u + v) <= 1.0);  
 
 }
 
@@ -85,7 +84,7 @@ bool Does_the_point_belong_to_the_plane(Vector3d point, Vector3d v0, Vector3d v1
 	Vector3d N = u.V_product(v);
 	Vector3d is_on_the_plane = point - v0;
 
-	if (N.D_product(is_on_the_plane) < 0.00001)		////////////////
+	if (N.D_product(is_on_the_plane) < 0.00001)
 	{
 		return true;
 	}
@@ -97,12 +96,7 @@ bool Does_the_point_belong_to_the_plane(Vector3d point, Vector3d v0, Vector3d v1
 bool Rectangle_intersection(Vector3d origin, Vector3d direction, Vector3d vertex1, Vector3d vertex2, Vector3d vertex3,Vector3d vertex4)
 {
 
-	if (Triangle_intersection(origin,direction,vertex1,vertex2,vertex4))
-	{
-		return true;
-	}
-
-	if (Triangle_intersection(origin, direction, vertex3, vertex2, vertex4))
+	if (Triangle_intersection(origin, direction, vertex1, vertex2, vertex4) || Triangle_intersection(origin, direction, vertex2, vertex3, vertex4))
 	{
 		return true;
 	}
@@ -119,7 +113,7 @@ bool Rectangle_intersection_for_point(Vector3d origin, Vector3d direction, Vecto
 		return true;
 	}
 
-	if (Triangle_intersection_for_point(origin,direction,vertex3,vertex2,vertex4,t))
+	if (Triangle_intersection_for_point(origin,direction,vertex2,vertex3,vertex4,t))
 	{
 		return true;
 	}
