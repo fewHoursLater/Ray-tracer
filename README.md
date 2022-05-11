@@ -1,1 +1,1 @@
-# Ray_tracer
+![Screenshot](render.bmp)
