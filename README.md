@@ -13,4 +13,4 @@ box 0.0 0.0 0.0 1.0 1.0 1.0<br>
 tetra 4.0 2.0 1.0 4.0 1.0 1.0 3.0 0.0 2.0 3.0 1.0 1.0<br>
 sphere 5.5 1.0 1.0 0.5</p>
 
-![Screenshot](render.bmp)
+![Screenshot](render1.bmp)
