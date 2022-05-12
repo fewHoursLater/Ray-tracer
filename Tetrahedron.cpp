@@ -41,7 +41,7 @@ Vector3d Tetrahedron::ret_normal(Vector3d point)
 
 		Vector3d N = u.V_product(v);
 
-		if (N.D_product(inside)> 0.0)  ////////////////
+		if (N.D_product(inside)> 0.0)
 		{
 			N = N * (-1.0);
 		}
@@ -62,7 +62,7 @@ Vector3d Tetrahedron::ret_normal(Vector3d point)
 
 		Vector3d N = u.V_product(v);
 
-		if (N.D_product(inside) > 0.0)  ////////////////
+		if (N.D_product(inside) > 0.0)
 		{
 			N = N * (-1.0);
 		}
@@ -81,7 +81,7 @@ Vector3d Tetrahedron::ret_normal(Vector3d point)
 
 		Vector3d N = u.V_product(v);
 
-		if (N.D_product(inside) > 0.0)  ////////////////
+		if (N.D_product(inside) > 0.0)
 		{
 			N = N * (-1.0);
 		}
@@ -100,7 +100,7 @@ Vector3d Tetrahedron::ret_normal(Vector3d point)
 
 		Vector3d N = u.V_product(v);
 
-		if (N.D_product(inside) > 0.0)  ////////////////
+		if (N.D_product(inside) > 0.0)
 		{
 			N = N * (-1.0);
 		}

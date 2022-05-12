@@ -12,6 +12,17 @@
 
 int main()
 {
+
+	/*Vector3d a(1.0, 0.0, 0.0);
+	Vector3d b(0.0, -1.0, 0.0);
+	Vector3d c(0.0, 1.0, 0.0);
+
+	cout << Triangle_square(a, b, c) << endl;
+	return 1;*/
+
+
+
+
 	try
 	{
 		Spectator camera;
@@ -283,119 +294,120 @@ int main()
 			{
 				for (int i = 0; i < screen.get_width(); i++)
 				{
+					int Cx = 0;
+					int Cy = 0;
 
-						int Cx = 0;
-						int Cy = 0;
+					if (screen.get_width() % 2 == 0)
+					{
+						Cx = i - screen.get_width() / 2;
+					}
 
-						if (screen.get_width() % 2 == 0)
+					if (screen.get_width() % 2 != 0)
+					{
+						Cx = i - (screen.get_width() - 1) / 2;
+					}
+
+					if (screen.get_height() % 2 == 0)
+					{
+						Cy = (screen.get_height() / 2) - j;
+					}
+
+					if (screen.get_height() % 2 != 0)
+					{
+						Cy = ((screen.get_height() - 1) / 2) - j;
+					}
+
+					double Vx = (double)Cx / (double)screen.get_width();
+					double Vy = (double)Cy / (double)screen.get_width();
+
+					current = up_on_screen * Vy + tangent_on_screen * Vx;
+
+					Vector3d ray_direction = center_of_screen + current - spectator_position;
+					Vector3d ray_origin = spectator_position;
+
+					Vector3d variation = forward + up_on_screen * Vy;
+
+					if (Greater(forward ^ variation, (camera.get_angle_of_view() / 2.0)))
+					{
+						continue;
+					}
+
+					if (it->second->ray_intersect(ray_origin, ray_direction))
+					{
+						Vector3d point_on_object = it->second->ret_point(ray_origin, ray_direction);
+						Vector3d normal_to_object = it->second->ret_normal(point_on_object);
+
+						Vector3d from_center_of_screen_to_point = point_on_object - center_of_screen;
+
+						double projection = from_center_of_screen_to_point.D_product(normal_to_screen);
+
+						/*if (Greater(projection, camera.get_dist_screen_scene()) || projection < 0.001) /// Throw не работает при parallel for
 						{
-							Cx = i - screen.get_width() / 2;
-						}
+							throw std::runtime_error("Some figure has gone beyond the boundaries.\n");
+						}*/
 
-						if (screen.get_width() % 2 != 0)
+						Vector3d light_position = lamp.get_position();
+						Vector3d from_point_on_object_to_lamp = light_position - point_on_object;
+						Vector3d from_point_on_object_to_camera = spectator_position - point_on_object;
+
+						from_point_on_object_to_lamp.normalize();
+
+						double cur_color[3];
+
+						double light_intense = from_point_on_object_to_lamp.D_product(normal_to_object);
+
+						if (light_intense <= 0.0)
 						{
-							Cx = i - (screen.get_width() - 1) / 2;
-						}
-
-						if (screen.get_height() % 2 == 0)
-						{
-							Cy = (screen.get_height() / 2) - j;
-						}
-
-						if (screen.get_height() % 2 != 0)
-						{
-							Cy = ((screen.get_height() - 1) / 2) - j;
-						}
-
-						double Vx = (double)Cx / (double)screen.get_width();
-						double Vy = (double)Cy / (double)screen.get_width();
-
-						current = up_on_screen * Vy + tangent_on_screen * Vx;
-
-						Vector3d ray_direction = center_of_screen + current - spectator_position;
-						Vector3d ray_origin = spectator_position;
-
-						Vector3d variation = forward + up_on_screen * Vy;
-
-						if (Greater(forward ^ variation, (camera.get_angle_of_view() / 2.0)))
-						{
-							continue;
-						}
-
-						if (it->second->ray_intersect(ray_origin, ray_direction))
-						{
-							Vector3d point_on_object = it->second->ret_point(ray_origin, ray_direction);
-							Vector3d normal_to_object = it->second->ret_normal(point_on_object);
-
-							Vector3d from_center_of_screen_to_point = point_on_object - center_of_screen;
-
-							double projection = from_center_of_screen_to_point.D_product(normal_to_screen);
-
-							/*if (Greater(projection, camera.get_dist_screen_scene()) || projection < 0.001) /// Throw не работает при parallel for
-							{
-								throw std::runtime_error("Some figure has gone beyond the boundaries.\n");
-							}*/
-
-							Vector3d light_position = lamp.get_position();
-							Vector3d from_point_on_object_to_lamp = light_position - point_on_object;
-							Vector3d from_point_on_object_to_camera = spectator_position - point_on_object;
-
-							from_point_on_object_to_lamp.normalize();
-
-							double cur_color[3];
-
-							double light_intense = from_point_on_object_to_lamp.D_product(normal_to_object);
-
-							if (light_intense < 0.001)
-							{
-								cur_color[0] = 0.0;
-								cur_color[1] = 0.0;
-								cur_color[2] = 0.0;
-
-								image.draw_point(i, j, cur_color);
-
-								continue;
-							}
-
-							cur_color[0] = object_color[0] * light_intense;
-							cur_color[1] = object_color[1] * light_intense;
-							cur_color[2] = object_color[2] * light_intense;
-
-							Vector3d R = normal_to_object * 2.0 * normal_to_object.D_product(from_point_on_object_to_lamp) - from_point_on_object_to_lamp;
-							Vector3d N = normal_to_object;
-							Vector3d L = from_point_on_object_to_lamp;
-							Vector3d C = from_point_on_object_to_camera;
-							Vector3d H = (L + C);
-
-							double k = 128.0;
-
-							H.normalize();
-							C.normalize();
-							L.normalize();
-							N.normalize();
-							R.normalize();
-
-							Vector3d color(cur_color[0], cur_color[1], cur_color[2]);
-
-							double ambientStrength = 0.9;
-							Vector3d ambient = color * ambientStrength;
-
-							double diffuse_component = std::max(0.0, N.D_product(L));
-							Vector3d diffuse = color * diffuse_component;
-
-							double specularStrength = 0.9;
-							double specular_component = pow(max(0.0, R.D_product(C)), k);
-							Vector3d specular = color * specularStrength * specular_component;
-
-							Vector3d result = (ambient + specular + diffuse);
-
-							cur_color[0] = result.get_v1();
-							cur_color[1] = result.get_v2();
-							cur_color[2] = result.get_v3();
+							cur_color[0] = 0.0;
+							cur_color[1] = 0.0;
+							cur_color[2] = 0.0;
 
 							image.draw_point(i, j, cur_color);
 
-						}					
+							continue;
+						}
+
+						cur_color[0] = object_color[0] * light_intense;
+						cur_color[1] = object_color[1] * light_intense;
+						cur_color[2] = object_color[2] * light_intense;
+
+						Vector3d R = normal_to_object * 2.0 * normal_to_object.D_product(from_point_on_object_to_lamp) - from_point_on_object_to_lamp;
+						Vector3d N = normal_to_object;
+						Vector3d L = from_point_on_object_to_lamp;
+						Vector3d C = from_point_on_object_to_camera;
+						Vector3d H = (L + C);
+
+						double k = 128.0;
+
+						H.normalize();
+						C.normalize();
+						L.normalize();
+						N.normalize();
+						R.normalize();
+
+						Vector3d color(cur_color[0], cur_color[1], cur_color[2]);
+
+						double ambientStrength = 0.9;
+						Vector3d ambient = color * ambientStrength;
+
+						double diffuse_component = std::max(0.0, N.D_product(L));
+						Vector3d diffuse = color * diffuse_component;
+
+						double specularStrength = 0.9;
+						double specular_component = pow(max(0.0, R.D_product(C)), k);
+						Vector3d specular = color * specularStrength * specular_component;
+
+						Vector3d result = (ambient + specular + diffuse);
+
+						cur_color[0] = result.get_v1();
+						cur_color[1] = result.get_v2();
+						cur_color[2] = result.get_v3();
+
+						image.draw_point(i, j, cur_color);
+
+					}
+					
+									
 				}
 			}
 		}

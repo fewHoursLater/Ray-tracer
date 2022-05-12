@@ -13,3 +13,5 @@ bool Does_the_point_belong_to_the_plane(Vector3d, Vector3d, Vector3d, Vector3d);
 
 bool Rectangle_intersection(Vector3d, Vector3d, Vector3d, Vector3d, Vector3d, Vector3d);
 bool Rectangle_intersection_for_point(Vector3d, Vector3d, Vector3d, Vector3d, Vector3d, Vector3d, double&);
+
+double Triangle_square(Vector3d, Vector3d, Vector3d);

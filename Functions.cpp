@@ -30,48 +30,94 @@ bool Greater(double left, double right, bool orequal)
 
 }
 
-bool Triangle_intersection(Vector3d origin, Vector3d direction, Vector3d v0, Vector3d v1, Vector3d v2)
+bool Triangle_intersection(Vector3d origin, Vector3d direction, Vector3d v1, Vector3d v2, Vector3d v3)
 {
+	Vector3d e1 = v2 - v1;
+	Vector3d e2 = v3 - v1;
 
-	Vector3d E1 = v1 - v0;
-	Vector3d E2 = v2 - v0;
+	Vector3d pvec = direction.V_product(e2);
+	
+	double det = e1.D_product(pvec);
 
-	Vector3d N = E1.V_product(E2);
+	if (det < 1e-8 && det > -1e-8) {
+		return false;
+	}
 
-	double det = direction.D_product(N) * (-1.0);
-	double inv_det = 1.0 / det;
+	double inv_det = 1 / det;
+	
+	Vector3d tvec = origin - v1;
+	
+	double u = (tvec.D_product(pvec)) * inv_det;
+	
+	if (u < 0 || u > 1)
+	{
+		return false;
+	}
 
-	Vector3d AO = origin - v0;
-	Vector3d DAO = AO.V_product(direction);
+	Vector3d qvec = tvec.V_product(e1);
+	
+	double v = (direction.D_product(qvec)) * inv_det;
+	
+	if (v < 0 || u + v > 1)
+	{
+		return false;
+	}
 
-	double u = E2.D_product(DAO) * inv_det;
-	double v = E1.D_product(DAO) * inv_det * (-1.0);
+	double t = e2.D_product(qvec) * inv_det;
 
-	double t = AO.D_product(N) * inv_det;
+	if (t > 0)
+	{
+		return true;
+	}
 
-	return (fabs(det) >= 1e-6 && t >= 0.0 && u >= 0.0 && v >= 0.0 && (u + v) <= 1.0);
-
+	return false;
 }
 
-bool Triangle_intersection_for_point(Vector3d origin, Vector3d direction, Vector3d v0, Vector3d v1, Vector3d v2, double& t)
+
+
+bool Triangle_intersection_for_point(Vector3d origin, Vector3d direction, Vector3d v1, Vector3d v2, Vector3d v3, double& t)
 {
-	Vector3d E1 = v1 - v0;
-	Vector3d E2 = v2 - v0;
 
-	Vector3d N = E1.V_product(E2);
+	Vector3d e1 = v2 - v1;
+	Vector3d e2 = v3 - v1;
 
-	double det = direction.D_product(N) * (-1.0);
-	double inv_det = 1.0 / det;
+	Vector3d pvec = direction.V_product(e2);
 
-	Vector3d AO = origin - v0;
-	Vector3d DAO = AO.V_product(direction);
+	double det = e1.D_product(pvec);
 
-	double u = E2.D_product(DAO) * inv_det;
-	double v = E1.D_product(DAO) * inv_det * (-1.0);
+	if (det < 1e-8 && det > -1e-8)
+	{
+		return false;
+	}
 
-	t = AO.D_product(N) * inv_det;
+	double inv_det = 1 / det;
 
-	return (fabs(det) >= 1e-6 && t >= 0.0 && u >= 0.0 && v >= 0.0 && (u + v) <= 1.0);  
+	Vector3d tvec = origin - v1;
+
+	double u = (tvec.D_product(pvec)) * inv_det;
+
+	if (u < 0 || u > 1)
+	{
+		return false;
+	}
+
+	Vector3d qvec = tvec.V_product(e1);
+
+	double v = (direction.D_product(qvec)) * inv_det;
+
+	if (v < 0 || u + v > 1)
+	{
+		return false;
+	}
+
+	t = e2.D_product(qvec) * inv_det;
+
+	if (t > 0)
+	{
+		return true;
+	}
+
+	return false;
 
 }
 
@@ -84,7 +130,7 @@ bool Does_the_point_belong_to_the_plane(Vector3d point, Vector3d v0, Vector3d v1
 	Vector3d N = u.V_product(v);
 	Vector3d is_on_the_plane = point - v0;
 
-	if (N.D_product(is_on_the_plane) < 0.00001)
+	if (N.D_product(is_on_the_plane) < 0.000001)
 	{
 		return true;
 	}
